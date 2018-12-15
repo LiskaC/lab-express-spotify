@@ -29,7 +29,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/artists', (req, res) => {
-  res.render('artists', { artists: [{ name: 'Drake' }, { name: 'Madonna' }] })
-})
+  //res.render('artists', { artists: [{ name: 'Drake' }, { name: 'Madonna' }] })
+  spotifyApi.searchArtists(req.query.artistSearch)
+    .then(data => {
+      data.body.artists.items.forEach((a) => {
+        a.image = a.images[0]
+      })
+      res.render('artists', { artists: data.body.artists.items })
+    })
+    .catch(err => {
+      res.send("Somethin' ain't right...")
+    })
+});
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
